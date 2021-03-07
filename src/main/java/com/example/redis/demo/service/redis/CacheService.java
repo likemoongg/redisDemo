@@ -1,10 +1,6 @@
 package com.example.redis.demo.service.redis;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.example.redis.demo.constant.CacheConstant;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,15 +15,14 @@ import javax.annotation.Resource;
 public class CacheService {
 
     @Resource
-    private RedisTemplate<String, ?> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     public boolean set(String key, final Object value) {
         //设置 值
         return redisTemplate.execute(
                 (RedisCallback<Boolean>) connection -> {
-                    String keyForRedis = resetKey(key);
                     RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                    connection.set(serializer.serialize(keyForRedis), serializer.serialize(JSON.toJSONString(value)));
+                    connection.set(serializer.serialize(key), serializer.serialize(JSON.toJSONString(value)));
                     return true;
                 }
         );
@@ -38,9 +33,8 @@ public class CacheService {
         //设置 值
         boolean isSetSuccess = redisTemplate.execute(
                 (RedisCallback<Boolean>) connection -> {
-                    String keyForRedis = resetKey(key);
                     RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                    connection.set(serializer.serialize(keyForRedis), serializer.serialize(JSON.toJSONString(value)), Expiration.seconds(expireTime), RedisStringCommands.SetOption.upsert());
+                    connection.set(serializer.serialize(key), serializer.serialize(JSON.toJSONString(value)), Expiration.seconds(expireTime), RedisStringCommands.SetOption.upsert());
                     return true;
                 }
         );
@@ -50,7 +44,7 @@ public class CacheService {
     public <T> T get(String key, Class<T> clazz) {
         String result = redisTemplate.execute((RedisCallback<String>) connection -> {
             RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-            byte[] value = connection.get(serializer.serialize(resetKey(key)));
+            byte[] value = connection.get(serializer.serialize(key));
             return serializer.deserialize(value);
         });
         if (StringUtils.hasText(key)) {
@@ -62,15 +56,11 @@ public class CacheService {
     public void delete(String key) {
         redisTemplate.execute(
                 (RedisCallback<Boolean>) connection -> {
-                    String keyForRedis = resetKey(key);
                     RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                    connection.del(serializer.serialize(keyForRedis));
+                    connection.del(serializer.serialize(key));
                     return true;
                 }
         );
     }
 
-    private String resetKey(String key) {
-        return CacheConstant.USER_INFO + key;
-    }
 }

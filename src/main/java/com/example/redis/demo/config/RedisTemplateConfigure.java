@@ -1,8 +1,6 @@
 package com.example.redis.demo.config;
 
 import io.lettuce.core.resource.DefaultClientResources;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -13,10 +11,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 @Configuration
-@EnableConfigurationProperties(RedisProperties.class)
 public class RedisTemplateConfigure {
 
-    @Bean("redisTemplateStandAlone")
+    @Bean("redisTemplate")
     public RedisTemplate<String, Object> redisTemplateStandAlone() {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration("127.0.0.1",6379);
         redisConfig.setPassword("likemoongg");

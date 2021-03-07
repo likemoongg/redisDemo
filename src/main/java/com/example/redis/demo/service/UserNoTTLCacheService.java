@@ -1,16 +1,16 @@
 package com.example.redis.demo.service;
 
-import com.example.redis.demo.constant.CacheConstant;
 import com.example.redis.demo.domain.UserInfo;
 import com.example.redis.demo.service.redis.CacheService;
 import lombok.extern.slf4j.Slf4j;
+import com.example.redis.demo.constant.CacheConstant;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 @Service
 @Slf4j
-public class UserCacheService {
+public class UserNoTTLCacheService {
 
     @Resource
     private CacheService cacheService;
@@ -23,7 +23,7 @@ public class UserCacheService {
     public UserInfo getUserInfo(Long userId) {
         UserInfo cachedUserInfo = cacheService.get(getRedisKey(userId), UserInfo.class);
         if (cachedUserInfo == null) {
-            cacheService.setWithTTL(getRedisKey(userId), this.userInfo, 5L);
+            cacheService.set(getRedisKey(userId), this.userInfo);
         }
         return this.userInfo;
     }
@@ -34,7 +34,7 @@ public class UserCacheService {
     }
 
     private String getRedisKey(Object key) {
-        return CacheConstant.USER_INFO + key;
+        return CacheConstant.USER_INFO_WITHOUT_TTL + key;
     }
 
 }
