@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @CacheConfig(cacheNames = CacheConstant.USER_INFO_WITHOUT_TTL)
-public class UserNoCacheService {
+public class UserNoTTLCacheService {
 
     /**
      * 不考虑多线程，用这个模拟存储啦，方便 debug!

@@ -1,7 +1,7 @@
 package com.example.redis.demo.controller;
 
 import com.example.redis.demo.domain.UserInfo;
-import com.example.redis.demo.service.UserNoCacheService;
+import com.example.redis.demo.service.UserNoTTLCacheService;
 import com.example.redis.demo.service.UserCacheService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ public class UserController {
     private UserCacheService userService;
 
     @Resource
-    private UserNoCacheService userNoCacheService;
+    private UserNoTTLCacheService userNoCacheService;
 
     @PostMapping("/setUserService")
     public void setUserService(@RequestBody UserInfo userInfo) {
